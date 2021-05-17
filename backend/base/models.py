@@ -41,9 +41,9 @@ class Order(models.Model):
     shippingPrice = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
     totalPrice = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
     isPaid = models.BooleanField(default=False)
-    paidAt = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    paidAt = models.DateTimeField(auto_now_add=False, null=True, blank=True)
     isDelivered = models.BooleanField(default=False)
-    deliveredAt = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    deliveredAt = models.DateTimeField(auto_now_add=False, null=True, blank=True)
     createdAt = models.DateTimeField(auto_now_add=True)
     _id = models.AutoField(primary_key=True, editable=False)
 
@@ -63,7 +63,7 @@ class OrderItem(models.Model):
     def __str__(self):
         return str(self.name)
 
-class ShippingAdress(models.Model):
+class ShippingAddress(models.Model):
     order = models.OneToOneField(Order, on_delete=models.CASCADE, null=True, blank=True)
     address = models.CharField(max_length=200, blank=True, null=True)
     city = models.CharField(max_length=200, blank=True, null=True)
@@ -73,4 +73,4 @@ class ShippingAdress(models.Model):
     _id = models.AutoField(primary_key=True, editable=False)
 
     def __str__(self):
-        return str(self.name)
+        return str(self.address)
