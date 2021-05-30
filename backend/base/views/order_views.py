@@ -76,22 +76,46 @@ def getMyOrder(request):
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def getOrders(request):
+    orders = Order.objects.all()
+    serializer = OrderSerializer(orders, many=True)
+    return Response(serializer.data)
+
+
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def getOrderById(request, pk):
+#     user = request.user
+    
+#     try:
+#         order = Order.objects.get(_id=pk)
+#         if user.is_staff or order.user == user:
+#             serializer = OrderSerializer(order, many=False)
+#             return Response(serializer.data)
+#         else:
+#             return Response({'detail': 'Not authorized to view this order'} , status=status.HTTP_400_BAD_REQUEST)
+    
+#     except:
+#         return Response({'detail': 'Order does not exist'} , status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getOrderById(request, pk):
+
     user = request.user
-    
+
     try:
         order = Order.objects.get(_id=pk)
-        if user.is_staff or oreder.user == user:
+        if user.is_staff or order.user == user:
             serializer = OrderSerializer(order, many=False)
             return Response(serializer.data)
         else:
-            return Response({'detail': 'Not authorized to view this order'} , status=HTTP_400_BAD_REQUEST)
-    
+            Response({'detail': 'Not authorized to view this order'},
+                     status=status.HTTP_400_BAD_REQUEST)
     except:
-        return Response({'detail': 'Order does not exist'} , status=HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'Order does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['PUT'])
@@ -104,3 +128,15 @@ def updateOrderToPaid(request, pk):
     order.save()
 
     return Response('Order was paid')
+
+
+@api_view(['PUT'])
+@permission_classes([IsAdminUser])
+def updateOrderToDelivered(request, pk):
+    order = Order.objects.get(_id=pk)
+
+    order.isDelivered = True
+    order.deliveredAt = datetime.now()
+    order.save()
+
+    return Response('Order was delivered')
